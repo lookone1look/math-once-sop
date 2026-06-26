@@ -248,6 +248,50 @@
     color:var(--muted);
     font-size:13px;
   }
+  .publish-panel{
+    margin:-8px 0 22px;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+  }
+  .publish-panel[hidden]{display:none}
+  .publish-panel strong{display:block;margin-bottom:6px}
+  .publish-panel p{margin:6px 0;color:var(--muted);font-size:13px}
+  .publish-panel label{
+    display:block;
+    margin:10px 0 8px;
+    font-weight:700;
+  }
+  .publish-panel input{
+    width:100%;
+    margin-top:6px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font:inherit;
+  }
+  .publish-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+  }
+  .publish-actions button{
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:#fff;
+    color:var(--text);
+    padding:7px 10px;
+    font:inherit;
+    cursor:pointer;
+  }
+  .publish-actions button.primary{
+    border-color:var(--primary);
+    background:var(--primary);
+    color:#fff;
+    font-weight:700;
+  }
   main.is-editing header,
   main.is-editing section{
     outline:2px dashed rgba(15,118,110,.35);
@@ -289,9 +333,23 @@
       <button id="editToggle" class="primary" type="button">进入编辑模式</button>
       <button id="saveDraft" type="button">保存草稿</button>
       <button id="loadDraft" type="button">恢复草稿</button>
+      <button id="publishOnline" type="button">发布到线上</button>
+      <button id="authToggle" type="button">发布权限</button>
       <button id="exportHtml" type="button">导出 HTML</button>
       <button id="copyText" type="button">复制纯文本</button>
       <span id="editStatus" class="status">浏览模式</span>
+    </div>
+    <div id="publishPanel" class="publish-panel" hidden contenteditable="false">
+      <strong>发布权限</strong>
+      <p>首次发布需要粘贴一次 GitHub 令牌。令牌只保存在你当前浏览器里，不会写进网页文件。没有令牌的人只能查看，不能发布。</p>
+      <p>令牌需要能修改这个仓库：<code>lookone1look/math-once-sop</code> 的内容。</p>
+      <label for="githubToken">GitHub 令牌</label>
+      <input id="githubToken" type="password" autocomplete="off" placeholder="粘贴 github_pat_ 或 ghp_ 开头的令牌">
+      <div class="publish-actions">
+        <button id="saveToken" class="primary" type="button">保存发布权限</button>
+        <button id="clearToken" type="button">清除本机权限</button>
+        <button id="hideAuth" type="button">收起</button>
+      </div>
     </div>
     <header>
       <div class="eyebrow">边做边查版 SOP</div>
@@ -671,10 +729,22 @@
   const editToggle = document.getElementById('editToggle');
   const saveDraft = document.getElementById('saveDraft');
   const loadDraft = document.getElementById('loadDraft');
+  const publishOnline = document.getElementById('publishOnline');
+  const authToggle = document.getElementById('authToggle');
+  const publishPanel = document.getElementById('publishPanel');
+  const githubToken = document.getElementById('githubToken');
+  const saveToken = document.getElementById('saveToken');
+  const clearToken = document.getElementById('clearToken');
+  const hideAuth = document.getElementById('hideAuth');
   const exportHtml = document.getElementById('exportHtml');
   const copyText = document.getElementById('copyText');
   const status = document.getElementById('editStatus');
   const draftKey = 'sop-math-board-v1-draft';
+  const tokenKey = 'sop-math-board-v1-github-token';
+  const repoOwner = 'lookone1look';
+  const repoName = 'math-once-sop';
+  const repoBranch = 'main';
+  const repoFile = 'index.html';
 
   function nowText(){
     const d = new Date();
@@ -717,6 +787,83 @@
     URL.revokeObjectURL(url);
   }
 
+  function toBase64Utf8(text){
+    const bytes = new TextEncoder().encode(text);
+    let binary = '';
+    const chunkSize = 0x8000;
+    for(let i = 0; i < bytes.length; i += chunkSize){
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, chunk);
+    }
+    return btoa(binary);
+  }
+
+  function getStoredToken(){
+    return localStorage.getItem(tokenKey) || '';
+  }
+
+  function setStatus(text){
+    status.textContent = text;
+  }
+
+  function showPublishPanel(){
+    publishPanel.hidden = false;
+    githubToken.value = getStoredToken();
+    githubToken.focus();
+  }
+
+  async function githubRequest(url, options){
+    const token = getStoredToken();
+    if(!token){
+      showPublishPanel();
+      throw new Error('请先保存发布权限');
+    }
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${token}`,
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...(options && options.headers ? options.headers : {})
+      }
+    });
+    if(!response.ok){
+      let detail = '';
+      try{
+        const data = await response.json();
+        detail = data.message ? `：${data.message}` : '';
+      }catch(err){}
+      if(response.status === 401 || response.status === 403){
+        throw new Error('发布权限无效或权限不够，请重新保存 GitHub 令牌');
+      }
+      if(response.status === 409){
+        throw new Error('线上文件刚被改过，请刷新页面后重新修改再发布');
+      }
+      throw new Error(`GitHub 返回 ${response.status}${detail}`);
+    }
+    return response.json();
+  }
+
+  async function publishToGithub(){
+    const html = snapshot();
+    const api = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${repoFile}`;
+    setStatus('正在读取线上版本...');
+    const current = await githubRequest(`${api}?ref=${repoBranch}`, {method:'GET'});
+    setStatus('正在发布到线上...');
+    await githubRequest(api, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: `Update SOP page ${nowText()}`,
+        content: toBase64Utf8(html),
+        sha: current.sha,
+        branch: repoBranch
+      })
+    });
+    localStorage.setItem(draftKey, html);
+    setStatus('已提交，通常 1-3 分钟后刷新页面可见新版');
+  }
+
   editToggle.addEventListener('click', () => {
     setEditing(!main.classList.contains('is-editing'));
   });
@@ -736,6 +883,51 @@
       document.open();
       document.write(draft);
       document.close();
+    }
+  });
+
+  authToggle.addEventListener('click', () => {
+    publishPanel.hidden ? showPublishPanel() : publishPanel.hidden = true;
+  });
+
+  saveToken.addEventListener('click', () => {
+    const token = githubToken.value.trim();
+    if(!token){
+      setStatus('没有填写发布权限');
+      return;
+    }
+    localStorage.setItem(tokenKey, token);
+    githubToken.value = '';
+    publishPanel.hidden = true;
+    setStatus(`发布权限已保存在本机：${nowText()}`);
+  });
+
+  clearToken.addEventListener('click', () => {
+    localStorage.removeItem(tokenKey);
+    githubToken.value = '';
+    setStatus('已清除本机发布权限');
+  });
+
+  hideAuth.addEventListener('click', () => {
+    publishPanel.hidden = true;
+  });
+
+  publishOnline.addEventListener('click', async () => {
+    if(!getStoredToken()){
+      setStatus('请先打开“发布权限”，保存 GitHub 令牌');
+      showPublishPanel();
+      return;
+    }
+    publishOnline.disabled = true;
+    try{
+      await publishToGithub();
+    }catch(err){
+      setStatus(err.message || '发布失败');
+      if(String(err.message || '').includes('权限')){
+        showPublishPanel();
+      }
+    }finally{
+      publishOnline.disabled = false;
     }
   });
 
