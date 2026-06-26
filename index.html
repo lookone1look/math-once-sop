@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数学只错一次【新版】任务操作 SOP｜边做边查版</title>
@@ -328,18 +327,18 @@
     <a href="#appendix">附录：字段速查</a>
   </nav>
 
-  <main>
-    <div class="editorbar" contenteditable="false">
+  <main class="">
+    <div class="editorbar">
       <button id="editToggle" class="primary" type="button">进入编辑模式</button>
       <button id="saveDraft" type="button">保存草稿</button>
       <button id="loadDraft" type="button">恢复草稿</button>
-      <button id="publishOnline" type="button">发布到线上</button>
+      <button id="publishOnline" type="button" disabled="">发布到线上</button>
       <button id="authToggle" type="button">发布权限</button>
       <button id="exportHtml" type="button">导出 HTML</button>
       <button id="copyText" type="button">复制纯文本</button>
       <span id="editStatus" class="status">浏览模式</span>
     </div>
-    <div id="publishPanel" class="publish-panel" hidden contenteditable="false">
+    <div id="publishPanel" class="publish-panel" hidden="">
       <strong>发布权限</strong>
       <p>首次发布需要粘贴一次 GitHub 令牌。令牌只保存在你当前浏览器里，不会写进网页文件。没有令牌的人只能查看，不能发布。</p>
       <p>令牌需要能修改这个仓库：<code>lookone1look/math-once-sop</code> 的内容。</p>
@@ -353,9 +352,9 @@
     </div>
     <header>
       <div class="eyebrow">边做边查版 SOP</div>
-      <h1>数学只错一次【新版】任务的操作 SOP（音画同步板书）</h1>
+      <h1>数学只错一次【新版】任务的操作 SOP（音画同步板书）吴彦祖到此一游</h1>
       <p class="lead">面向第一次执行新版任务的人。按后台操作顺序检查和修改字段，每一步都看“入口、操作、通过标准、异常处理、证据回指”。</p>
-      <p class="meta">来源：原 Word《数学只错一次【新版】任务的操作SOP（音画同步板书）》重构；不覆盖原文件。</p>
+      <p class="meta"><br></p>
     </header>
 
     <section id="overview">
@@ -378,11 +377,11 @@
         关键理解：新版流程不是精确写一段讲题稿，而是准备一组可被讲题模型调用的板书素材。执行时重点不是“每条板书都会出现”，而是“素材正确、顺序合理、重点可被识别、提前暴露被控制”。
       </div>
       <table>
-        <tr><th>输入</th><td>后台题目编辑页、清晰题目图片、旧流程提示词输出、Method 检测提示词、directorGuide 检测提示词。</td></tr>
+        <tbody><tr><th>输入</th><td>后台题目编辑页、清晰题目图片、旧流程提示词输出、Method 检测提示词、directorGuide 检测提示词。</td></tr>
         <tr><th>输出</th><td>提交后的新版任务，或标记为“其他”的异常任务并保留判断证据。</td></tr>
         <tr><th>证据链</th><td>字段内容、编译预览、检测提示词输出、异常截图、联系确认记录。</td></tr>
         <tr><th>不做什么</th><td>不重写教学目标，不扩展题外解法，不为每条板书强行编讲解词，不在无法判断时自行猜测异常原因。</td></tr>
-      </table>
+      </tbody></table>
     </section>
 
     <section id="workflow">
@@ -480,13 +479,13 @@
       </div>
 
       <table>
-        <tr><th>字段</th><th>新人只需要先记住的判断</th><th>常见错误</th></tr>
+        <tbody><tr><th>字段</th><th>新人只需要先记住的判断</th><th>常见错误</th></tr>
         <tr><td><code>content</code></td><td>板书上会完整写出来的内容，必须正确、简短、一步一推导。</td><td>一句里塞多步；计算错；数学元素没有 LaTeX；LaTeX 反斜杠未转义。</td></tr>
         <tr><td><code>label</code></td><td>决定写到板书区域哪里。可选：推理、计算、结论、公式、方法、注意、总结。</td><td>自创标签；含具体数字的步骤没有选推理/计算/结论。</td></tr>
         <tr><td><code>priority</code></td><td>核心板书填 <code>key</code>；非核心不填该字段。</td><td>把所有内容都标 key；或关键结论没有标 key。</td></tr>
         <tr><td><code>marks</code></td><td>写出来时就持续高亮的内容。文本必须来自 <code>content</code>。</td><td>结论没有 answer；公式没有 formula；后续复用的计算结果没有 keyvalue。</td></tr>
         <tr><td><code>keySegments</code></td><td>讲题模型可以临时强调的内容，宁多勿少。文本必须来自 <code>content</code>。</td><td>和 marks 混淆；关键数字和短语未列入。</td></tr>
-      </table>
+      </tbody></table>
 
       <details>
         <summary>正文保留示例：正确 step</summary>
@@ -592,7 +591,7 @@
     <section id="exception">
       <h2>异常处理表</h2>
       <table>
-        <tr>
+        <tbody><tr>
           <th>触发条件</th>
           <th>是否自行处理</th>
           <th>处理方式</th>
@@ -634,13 +633,13 @@
           <td>公式含义不确定时确认</td>
           <td>原公式、渲染结果、修改后字段</td>
         </tr>
-      </table>
+      </tbody></table>
     </section>
 
     <section id="checklist">
       <h2>提交前检查表</h2>
       <table class="checklist">
-        <tr><th>勾选</th><th>检查项</th><th>通过口径</th></tr>
+        <tbody><tr><th>勾选</th><th>检查项</th><th>通过口径</th></tr>
         <tr><td>□</td><td>任务类型</td><td>已确认是新版任务，且页面结构为正常可修改任务。</td></tr>
         <tr><td>□</td><td>题干</td><td>题干完整、无明显识别错误，和题目图片一致。</td></tr>
         <tr><td>□</td><td>答案</td><td>答案与题目条件、计算过程一致。</td></tr>
@@ -651,7 +650,7 @@
         <tr><td>□</td><td>预览</td><td>修改并保存后，刷新能看到正确编译效果。</td></tr>
         <tr><td>□</td><td>提示词复核</td><td>Method 和 directorGuide 已复核；硬错误已修；风险项已人工确认。</td></tr>
         <tr><td>□</td><td>提交/异常</td><td>能说明为什么提交，或能说明为什么标异常以及证据是什么。</td></tr>
-      </table>
+      </tbody></table>
     </section>
 
     <section id="appendix">
@@ -659,7 +658,7 @@
 
       <h3>label 选择</h3>
       <table>
-        <tr><th>值</th><th>适用内容</th></tr>
+        <tbody><tr><th>值</th><th>适用内容</th></tr>
         <tr><td>推理</td><td>用题目信息、假设、关系说明推进思路。</td></tr>
         <tr><td>计算</td><td>含具体数字、算式、结果的步骤。</td></tr>
         <tr><td>结论</td><td>阶段答案或最终答案。</td></tr>
@@ -667,15 +666,15 @@
         <tr><td>方法</td><td>方法名称或解法策略。</td></tr>
         <tr><td>注意</td><td>易错提醒。</td></tr>
         <tr><td>总结</td><td>方法归纳或知识总结。</td></tr>
-      </table>
+      </tbody></table>
 
       <h3>marks 使用规则</h3>
       <table>
-        <tr><th>style</th><th>何时使用</th><th>必须场景</th></tr>
+        <tbody><tr><th>style</th><th>何时使用</th><th>必须场景</th></tr>
         <tr><td><code>answer</code></td><td>最终答案或关键结论。</td><td><code>label="结论"</code> 的 step 必须标注答案数值或关键结论。</td></tr>
         <tr><td><code>formula</code></td><td>整条公式。</td><td><code>label="公式"</code> 的 step 必须标注公式。</td></tr>
         <tr><td><code>keyvalue</code></td><td>关键中间计算结果，后续步骤会复用。</td><td><code>label="计算"</code> 且结果后续复用时必须标注。</td></tr>
-      </table>
+      </tbody></table>
 
       <h3>可不加 marks 的情况</h3>
       <ul>
@@ -715,10 +714,10 @@
 
       <h3>提示词入口</h3>
       <table>
-        <tr><th>提示词</th><th>用途</th><th>位置</th></tr>
+        <tbody><tr><th>提示词</th><th>用途</th><th>位置</th></tr>
         <tr><td>Method 检测提示词</td><td>检查 <code>questionMethod.steps</code> 的结构、内容、LaTeX、label、marks、keySegments。</td><td>本地文件《Method检测提示词.md》或钉钉文档附件。</td></tr>
         <tr><td>directorGuide 检测提示词</td><td>检查阶段划分和提前暴露控制。</td><td>钉钉文档附件《directorGuide检测提示词.md》。</td></tr>
-      </table>
+      </tbody></table>
     </section>
   </main>
 </div>
@@ -956,5 +955,6 @@
   setEditing(false);
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
