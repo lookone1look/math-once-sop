@@ -6,13 +6,22 @@
 
 ### 在网页端更新
 
-1. 打开编辑入口：
-   https://github.com/lookone1look/math-once-sop/edit/main/index.html
-2. 在 GitHub 网页里修改内容。
-3. 点击 `Commit changes` 保存。
-4. 等 GitHub Pages 自动重新发布。
-5. 打开或刷新这个网址查看新版：
+1. 打开网页：
    https://lookone1look.github.io/math-once-sop/
+2. 点击 `进入编辑模式`。
+3. 在页面正文里直接修改内容。
+4. 首次发布前点击 `发布权限`，保存 GitHub 令牌。
+5. 点击 `发布到线上`。
+6. 等 GitHub Pages 自动重新发布。
+7. 打开或刷新这个网址查看新版：
+   https://lookone1look.github.io/math-once-sop/
+
+没有 GitHub 令牌的人只能查看网页，不能发布改动。
+
+### 代码编辑入口
+
+如果需要直接修改 HTML 源码，再使用这个入口：
+https://github.com/lookone1look/math-once-sop/edit/main/index.html
 
 ### 在本地更新
 
